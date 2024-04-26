@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Gastos</title>
+    <link rel="stylesheet" href="styles.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="main.js"></script>
+</head>
+<body>
+    <h1 class="titulo">Gastos Mensuales</h1>
+    <form class="form" id="gastoForm">
+        <!-- Removed ID input as it's handled by the API now -->
+        <select id="categoria" name="categoria" required>
+            <option value="Mercaderia">Mercaderia</option>
+            <option value="Facturas">Facturas</option>
+            <option value="Ocio">Ocio</option>
+            <option value="Salud">Salud</option>
+            <option value="Transporte">Transporte</option>
+        </select><br>
+        <input type="text" id="descripcion" name="descripcion" placeholder="Descripción" required><br>
+        <input type="number" step="0.01" id="monto" name="monto" placeholder="Monto" required><br>
+        <button type="button" onclick="agregarGasto()">Agregar gasto mensual</button>
+    </form>
+
+    <script>
+        function agregarGasto() {
+            const formData = {
+                categoria: document.getElementById('categoria').value,
+                descripcion: document.getElementById('descripcion').value,
+                monto: parseFloat(document.getElementById('monto').value),
+            };
+
+            fetch('http://127.0.0.1:8000/gastos/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => alert('Gasto agregado con éxito: ' + JSON.stringify(data)))
+            .catch(error => alert('Error al agregar gasto: ' + error));
+        }
+    </script>
+    <h2 class="Lista">Lista de gastos mensuales</h2>
+    <div class="table-container">
+        <table class="table">
+            <thead class="cabezales">
+                <tr>
+                    <th>ID</th>
+                    <th>Categoría</th>
+                    <th>Descripción</th>
+                    <th>Monto</th>
+                </tr>
+            </thead>
+            <tbody id="gastos">
+                <!-- Entries will be populated here by the main.js script -->
+            </tbody>
+        </table>
+        <div class="montoTotal">
+            <strong>Total Gastos:</strong> <span id="totalMonto">0</span>
+        </div>
+    </div>
+</body>
+</html>
